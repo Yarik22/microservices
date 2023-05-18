@@ -13,48 +13,47 @@ export class BanksController {
 
   @EventPattern('add_bank')
   async create(data: CreateBankDto) {
-    console.log(data)
     const bank = await this.banksService.addBank(data)
     console.log(bank)
     return bank;
   }
 
-  @ApiOperation({summary:"Get all banks"})
-  @ApiResponse({type:[Bank]})  
-  @Get()
-  findAll() {
-    return this.banksService.getAllBanks();
-  }
+  // @ApiOperation({summary:"Get all banks"})
+  // @ApiResponse({type:[Bank]})  
+  // @Get()
+  // findAll() {
+  //   return this.banksService.getAllBanks();
+  // }
 
-  @ApiOperation({summary:"Get bank by id"})
-  @ApiResponse({type:Bank})  
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.banksService.findBankById(+id);
-  }
+  // @ApiOperation({summary:"Get bank by id"})
+  // @ApiResponse({type:Bank})  
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.banksService.findBankById(+id);
+  // }
 
-  @ApiOperation({summary:"Change bank data by id"})
-  @ApiResponse({type:Bank})  
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() data: UpdateBankDto) {
-    return this.banksService.updateBankById(+id, data);
-  }
+  // @ApiOperation({summary:"Change bank data by id"})
+  // @ApiResponse({type:Bank})  
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() data: UpdateBankDto) {
+  //   return this.banksService.updateBankById(+id, data);
+  // }
 
-  @ApiOperation({summary:"Delete bank by id"})
-  @ApiResponse({type:Bank})  
-  @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.banksService.deleteBankById(+id);
-  }
+  // @ApiOperation({summary:"Delete bank by id"})
+  // @ApiResponse({type:Bank})  
+  // @Delete(':id')
+  // delete(@Param('id') id: string) {
+  //   return this.banksService.deleteBankById(+id);
+  // }
 
-  @ApiOperation({ summary: "Upload File" })
-  @ApiResponse({ type: Bank })
-  @Post(':id/upload')
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file) {
-    console.log('test')
-    return this.banksService.uploadFile(file);
+  // @ApiOperation({ summary: "Upload File" })
+  // @ApiResponse({ type: Bank })
+  // @Post(':id/upload')
+  // @UseInterceptors(FileInterceptor('file'))
+  // async uploadFile(@UploadedFile() file) {
+  //   console.log('test')
+  //   return this.banksService.uploadFile(file);
 
-  }
+  // }
 
 }

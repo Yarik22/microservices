@@ -1,24 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Inject } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { Category } from './entities/category.entity';
-import { ClientProxy } from '@nestjs/microservices';
+import { CategoriesService } from './category.service';
+import { EventPattern } from '@nestjs/microservices';
 
 @ApiTags("categories")
 @Controller('categories')
 export class CategoriesController {
-  constructor(
-    @Inject('CATEGORY_SERVICE') private readonly client: ClientProxy
-  ) {}
-  async onApplicationBootstrap() {
-    await this.client.connect();
-  }
-  @ApiOperation({summary:"Add category"})
-  @ApiResponse({type:Category})  
+  constructor(private readonly categoriesService: CategoriesService) {}
+
+  @EventPattern('add_category')
   @Post()
-  create(@Body() data: CreateCategoryDto) {
-    this.client.emit<Category>('add_category',data).subscribe();
+  create(@Body() createCategoryDto: CreateCategoryDto) {
+    const category = this.categoriesService.addCategory(createCategoryDto);
+    console.log(category)
+    return category;
   }
 
   // @ApiOperation({summary:"Get all categories"})

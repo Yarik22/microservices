@@ -1,14 +1,30 @@
-import { Injectable } from '@nestjs/common';
-import { CategoriesService } from 'src/categories/categories.service';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { TransactionAmountStatisticDto } from './dto/transaction-statistic.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Category } from 'src/categories/entities/category.entity';
+import { Repository } from 'typeorm';
+
 
 @Injectable()
 export class StatisticsService {
     constructor(
-        private readonly categoriesService:CategoriesService
+        @InjectRepository(Category) private readonly categoryRepository:Repository<Category>
     ){}
+
+    async findAllCategoriesByIds(categoryIds: number[]): Promise<Category[]> {
+        const categories = await this.categoryRepository
+          .createQueryBuilder('category')
+          .leftJoinAndSelect('category.transactions', 'transaction')
+          .whereInIds(categoryIds)
+          .getMany();
+          if(!categories.length){
+            throw new HttpException("No such categories",HttpStatus.NOT_FOUND)
+          }
+        return categories;
+      }
+      
     async getTotalAmountOfCategories(data:TransactionAmountStatisticDto){
-        const categories = await this.categoriesService.findAllCategoriesByIds(data.categoryIds)
+        const categories = await this.findAllCategoriesByIds(data.categoryIds)
 
         const transactionsArray = categories
         .map(category=> category.transactions

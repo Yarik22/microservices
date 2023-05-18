@@ -1,13 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { Transport } from '@nestjs/microservices';
-import { BanksModule } from './banks.module';
+import { TransactionsModule } from './transactons.module';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice(BanksModule, {
+  const app = await NestFactory.createMicroservice(TransactionsModule, {
     transport: Transport.RMQ,
     options: { 
          urls: ['amqp://guest:guest@localhost:5672/banking'],
-         queue: 'banks',
+         queue: 'transactions',
          queueOptions: { 
             durable: false
            },

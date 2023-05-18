@@ -1,22 +1,19 @@
-import { Controller, Get, Post, Body, Param, Delete, Query, UseGuards, Inject } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Query, UseGuards } from '@nestjs/common';
+import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { PaginationDto } from './dto/pagination.dto';
-import { HttpService } from '@nestjs/axios';
 import { ApiOperation } from '@nestjs/swagger';
 import { ApiResponse, ApiTags } from '@nestjs/swagger/dist';
 import { Transaction } from './entities/transaction.entity';
-import { ApiKeyGuard } from 'src/guards/apikey.guard';
-import { ClientProxy } from '@nestjs/microservices';
+import { EventPattern } from '@nestjs/microservices';
 
 @ApiTags("transactions")
 @Controller('transactions')
 export class TransactionsController {
   constructor(
-    @Inject('TRANSACTION_SERVICE') private readonly client: ClientProxy
-    ) { }
-  async onApplicationBootstrap() {
-    await this.client.connect();
-  }
+    private readonly transactionsService: TransactionsService,
+    ) {}
+
   // @ApiOperation({summary:"Get paginated transactions"})
   // @ApiResponse({type:[Transaction]})  
   // @Get()
@@ -31,11 +28,12 @@ export class TransactionsController {
   //   }
   // }
   
-  @ApiOperation({summary:"Add transaction"})
-  @ApiResponse({type:Transaction})
+  @EventPattern('add_transaction')
   @Post() 
   async createOrder(@Body() data:CreateTransactionDto) { 
-    this.client.emit<Transaction>('add_transaction',data).subscribe();
+    const transaction =  await this.transactionsService.createTransaction(data); 
+    console.log(transaction) 
+    return {...transaction,categories:data.categories}
   } 
 
   // @ApiOperation({summary:"Delete transaction by id"})

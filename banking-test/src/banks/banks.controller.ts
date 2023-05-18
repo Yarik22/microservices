@@ -1,6 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors, Inject} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { BanksService } from './banks.service';
 import { CreateBankDto } from './dto/create-bank.dto';
 import { UpdateBankDto } from './dto/update-bank.dto';
 import { Bank } from './entities/bank.entity';
@@ -9,7 +8,9 @@ import { ClientProxy } from '@nestjs/microservices';
 @ApiTags("banks")
 @Controller('banks')
 export class BanksController {
-  constructor(@Inject('BANK_SERVICE') private readonly client:   ClientProxy,) { }
+  constructor(
+    @Inject('BANK_SERVICE') private readonly client: ClientProxy
+    ) { }
   async onApplicationBootstrap() {
     await this.client.connect();
   }
@@ -17,10 +18,7 @@ export class BanksController {
   @ApiResponse({type:Bank})  
   @Post()
   async create(@Body() data: CreateBankDto) {
-    console.log(data)
-    const bank = this.client.emit<Bank>('add_bank',data).subscribe();
-    console.log(bank)
-    // return bank;
+    this.client.emit<Bank>('add_bank',data).subscribe();
   }
 
   // @ApiOperation({summary:"Get all banks"})

@@ -1,15 +1,27 @@
 import { Module } from '@nestjs/common';
-import { CategoriesService } from './categories.service';
 import { CategoriesController } from './categories.controller';
 import { Category } from './entities/category.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   controllers: [CategoriesController],
-  providers: [CategoriesService],
+  providers: [],
   imports: [
-    TypeOrmModule.forFeature([Category])
+    TypeOrmModule.forFeature([Category]),
+    ClientsModule.register([
+      { 
+        name: 'CATEGORY_SERVICE', transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://guest:guest@localhost:5672/banking'],
+          queue: 'categories',
+          queueOptions: {
+            durable: false
+                },
+          },
+       },
+     ]),
   ],
-  exports:[CategoriesService]
+  exports:[]
 })
 export class CategoriesModule {}

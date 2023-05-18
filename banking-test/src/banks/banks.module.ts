@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { BanksService } from './banks.service';
 import { BanksController } from './banks.controller';
 import { Bank } from './entities/bank.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,14 +6,14 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   controllers: [BanksController],
-  providers: [BanksService],
+  providers: [],
   imports: [
     TypeOrmModule.forFeature([Bank]),
     ClientsModule.register([
       { 
         name: 'BANK_SERVICE', transport: Transport.RMQ,
         options: {
-          urls: ['amqp://guest:guest@localhost:5672/banks'],
+          urls: ['amqp://guest:guest@localhost:5672/banking'],
           queue: 'banks',
           queueOptions: {
             durable: false
@@ -23,6 +22,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
        },
      ]),
   ],
-  exports:[BanksService]
+  exports:[]
 })
 export class BanksModule {}

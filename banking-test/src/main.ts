@@ -3,9 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import chalk from 'chalk';
 import { AppModule } from './app.module';
-import { LoggerGo } from './logger.service';
 import { HttpExceptionFilter } from './filters/Exception.filter';
-import { Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
   const PORT = process.env.PORT || 5000
